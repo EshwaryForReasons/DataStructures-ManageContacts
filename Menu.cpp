@@ -14,7 +14,7 @@ int Menu::display_menu() const
 
 	while (true)
 	{
-		system("cls");
+		system("clear");
 		cout << "***** " << name << " *****" << endl;
 
 		for (int i = 0; i < (int)options.size(); i++)

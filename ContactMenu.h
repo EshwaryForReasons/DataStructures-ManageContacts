@@ -24,22 +24,23 @@ public:
 
 	ContactMenu();
 
-	bool list_contacts();
-	bool view_single_contact();
-	bool add_contact();
-	bool edit_contact();
-	bool delete_contact();
-
-	const Contact& get_contact() const {return contact;}
+	//Lists the contacts
+	void list_contacts();
+	//View a single contact by id
+	void view_single_contact();
+	//Add a new contact to the data
+	void add_contact();
+	//Edit an existing contact in the data
+	void edit_contact();
+	//Delete a contact from the data
+	void delete_contact();
 
 private:
 
-	//Represents a contact being edited
-	Contact contact;
 	//List of all contacts
 	ArrayList<Contact> contacts;
 
-	//Called when menu is constructed to initialize user_list from users_data file
+	//Called when menu is constructed to initialize contacts from contacts_data file
 	void init_contacts();
 
 	//Called to update contacts file. The passed in contact will be updated in the file, the rest will be reconstructed in place; append means add to the end, used for adding new contacts

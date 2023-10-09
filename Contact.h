@@ -1,28 +1,20 @@
 
+#pragma once
+
+#include "Person.h"
+
 #include <string>
-#include <inttypes.h>
 
 using namespace std;
-
-enum ROLES
-{
-    ROLE_NONE,
-    ROLE_INSTRUCTOR,
-    ROLE_STUDENT,
-};
 
 class Contact
 {
 public:
 
     Contact() = default;
-    Contact(int _id, string _first_name, string _middle_name, string _last_name, ROLES _role, string _organization, string _address, string _city, string _county, string _state, int _zip, string _primary_phone_number, string _secondary_phone_number, string _email)
+    Contact(int _id, const Person& _person, string _address, string _city, string _county, string _state, int _zip, string _primary_phone_number, string _secondary_phone_number, string _email)
         : id(_id)
-        , first_name(_first_name)
-        , middle_name(_middle_name)
-        , last_name(_last_name)
-        , role(_role)
-        , organization(_organization)
+        , person(_person)
         , address(_address)
         , city(_city)
         , county(_county)
@@ -34,15 +26,11 @@ public:
     {}
 
     Contact operator=(const Contact& other);
+    const bool operator==(const Contact& other);
 
     //Setters
     void set_id(int new_id) {id = new_id;}
-    void set_first_name(string new_first_name) {first_name = new_first_name;}
-    void set_middle_name(string new_middle_name)  {middle_name = new_middle_name;}
-    void set_last_name(string new_last_name) {last_name = new_last_name;}
-
-    void set_role(ROLES new_role) {role = new_role;}
-    void set_organization(string new_organization) {organization = new_organization;}
+    void set_person(const Person& new_person) {person = new_person;}
 
     void set_address(string new_address) {address = new_address;}
     void set_city(string new_city) {city = new_city;}
@@ -56,12 +44,7 @@ public:
 
     //Getters
     int get_id() const {return id;}
-    string get_first_name() const {return first_name;}
-    string get_middle_name() const {return middle_name;}
-    string get_last_name() const {return last_name;}
-
-    ROLES get_role() const {return role;}
-    string get_organization() const {return organization;}
+    Person get_person() const {return person;}
 
     string get_address() const {return address;}
     string get_city() const {return city;}
@@ -76,12 +59,7 @@ public:
 private:
 
     int id;
-    string first_name;
-    string middle_name;
-    string last_name;
-
-    ROLES role;
-    string organization;
+    Person person;
 
     string address;
     string city;
@@ -93,3 +71,23 @@ private:
     string secondary_phone_number;
     string email;
 };
+
+inline Contact Contact::operator=(const Contact& other)
+{
+    id = other.get_id();
+    person = other.get_person();
+    address = other.get_address();
+    city = other.get_city();
+    county = other.get_county();
+    state = other.get_state();
+    zip = other.get_zip();
+    primary_phone_number = other.get_primary_phone_number();
+    secondary_phone_number = other.get_secondary_phone_number();
+    email = other.get_email();
+    return Contact(id, person, address, city, county, state, zip, primary_phone_number, secondary_phone_number, email);
+}
+
+inline const bool Contact::operator==(const Contact& other)
+{
+    return (id == other.id && person == other.person && address == other.address && city == other.city && county == other.county && state == other.state && zip == other.zip && primary_phone_number == other.primary_phone_number && secondary_phone_number == other.secondary_phone_number && email == other.email);
+}
