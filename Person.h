@@ -5,6 +5,12 @@
 
 using namespace std;
 
+const int COLUMN_WIDTH = 25;
+const int SUPER_LONG_COLUMN_WIDTH = 35;
+const int LONG_COLUMN_WIDTH = 25;
+const int MEDIUM_COLUMN_WIDTH = 16;
+const int SHORT_COLUMN_WIDTH = 7;
+
 class Person
 {
 public:
@@ -20,6 +26,13 @@ public:
 
     Person operator=(const Person& other);
     const bool operator==(const Person& other);
+
+    //Returns a comma seperated list of format firstname,middlename,lastname,role,organization
+    const std::string to_string() const;
+    //Same as to_string, but this time each property is on a new line and labeled
+    const std::string to_labeled_string() const;
+    //Same as to_string, but it is now split into uniform columns
+    const std::string to_column_string() const;
 
     //Setters
     void set_first_name(string new_first_name) {first_name = new_first_name;}
@@ -46,18 +59,3 @@ private:
     string role;
     string organization;
 };
-
-inline Person Person::operator=(const Person& other)
-{
-    first_name = other.get_first_name();
-    middle_name = other.get_middle_name();
-    last_name = other.get_last_name();
-    role = other.get_role();
-    organization = other.get_organization();
-    return Person(first_name, middle_name, last_name, role, organization);
-}
-
-inline const bool Person::operator==(const Person& other)
-{
-    return (first_name == other.first_name && middle_name == other.middle_name && last_name == other.last_name && role == other.role && organization == other.organization);
-}

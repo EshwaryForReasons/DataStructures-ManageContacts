@@ -4,8 +4,37 @@
 #include <sstream>
 #include <thread>
 #include <iomanip>
+#include <iostream>
 
-const string USERS_DATA = "contacts_data.csv";
+const string CONTACTS_DATA = "contacts_data.csv";
+
+//Define a clear function based on OS the code is compiled for since there is no standard way to do this
+#ifdef _WIN32
+void clear_console()
+{
+	system("cls");
+}
+#elif __linux__
+void clear_console()
+{
+	system("clear");
+}
+#endif
+
+using namespace std::chrono_literals;
+
+static void block_and_go_back()
+{
+	cout << "Press q to go back." << endl;
+
+	string input;
+	getline(cin, input);
+
+	if(input != "q")
+		block_and_go_back();
+	else
+		cout << "Going back..." << endl;
+}
 
 ContactMenu::ContactMenu()
 	: Menu("Contact Menu")
@@ -24,10 +53,10 @@ void ContactMenu::init_contacts()
 {
 	contacts.clear();
 
-	ifstream in_file(USERS_DATA);
+	ifstream in_file(CONTACTS_DATA);
 
 	if(in_file.fail())
-		cout << "Failed to open " << USERS_DATA << " file!" << endl;
+		cout << "Failed to open " << CONTACTS_DATA << " file!" << endl;
 
 	//Enum to help access certain elements in the vector since the elements will always be in the same location; this is better than accessing them with numeric indices
 	enum
@@ -106,23 +135,23 @@ void ContactMenu::init_contacts()
 
 void ContactMenu::update_contacts_file(const Contact& update_contact, bool b_append)
 {
-	fstream file(USERS_DATA, b_append ? ios::app : ios::out);
+	fstream file(CONTACTS_DATA, b_append ? ios::app : ios::out);
+
+	//WIll always be added in the following format: contactid,firstname,middlename,lastname,role,organization,address,city,county,state,zip,primaryphonenumber,secondaryphonenumber,email
 
 	if (b_append)
-		//contactid,firstname,middlename,lastname,role,organization,address,city,county,state,zip,primaryphonenumber,secondaryphonenumber,email
-		file << update_contact.get_id() << "," << update_contact.get_person().get_first_name() << "," << update_contact.get_person().get_middle_name() << "," << update_contact.get_person().get_last_name() << "," << update_contact.get_person().get_role() << "," << update_contact.get_person().get_organization() << "," << update_contact.get_address() << "," << update_contact.get_city() << "," << update_contact.get_county() << "," << update_contact.get_state() << "," << update_contact.get_zip() << "," << update_contact.get_primary_phone_number() << "," << update_contact.get_secondary_phone_number() << "," << update_contact.get_email() << "\n";
+		file << update_contact.to_string() << "\n";
 	else
 	{
 		//Insert header
 		file << "id,first_name,middle_name,last_name,role,company_name,address,city,county,state,zip,phone1,phone,email" << endl;
 
-		//For all contacts write to file in format contactid,firstname,middlename,lastname,role,organization,address,city,county,state,zip,primaryphonenumber,secondaryphonenumber,email
 		for (int i = 0; i < contacts.get_num_elements(); ++i)
 		{
 			if (contacts[i].get_id() == update_contact.get_id())
-				file << update_contact.get_id() << "," << update_contact.get_person().get_first_name() << "," << update_contact.get_person().get_middle_name() << "," << update_contact.get_person().get_last_name() << "," << update_contact.get_person().get_role() << "," << update_contact.get_person().get_organization() << "," << update_contact.get_address() << "," << update_contact.get_city() << "," << update_contact.get_county() << "," << update_contact.get_state() << "," << update_contact.get_zip() << "," << update_contact.get_primary_phone_number() << "," << update_contact.get_secondary_phone_number() << "," << update_contact.get_email() << "\n";
+				file << update_contact.to_string() << "\n";
 			else
-				file << contacts[i].get_id() << "," << contacts[i].get_person().get_first_name() << "," << contacts[i].get_person().get_middle_name() << "," << contacts[i].get_person().get_last_name() << "," << contacts[i].get_person().get_role() << "," << contacts[i].get_person().get_organization() << "," << contacts[i].get_address() << "," << contacts[i].get_city() << "," << contacts[i].get_county() << "," << contacts[i].get_state() << "," << contacts[i].get_zip() << "," << contacts[i].get_primary_phone_number() << "," << contacts[i].get_secondary_phone_number() << "," << contacts[i].get_email() << "\n";
+				file << contacts[i].to_string() << "\n";
 		}
 	}
 
@@ -132,87 +161,91 @@ void ContactMenu::update_contacts_file(const Contact& update_contact, bool b_app
 	init_contacts();
 }
 
+void ContactMenu::begin()
+{
+	bool b_exit = false;
+	
+	while (!b_exit)
+	{
+		clear_console();
+		int selected_option = display_menu();
+		clear_console();
+
+		if (selected_option == CONTACT_MENU_LIST)
+		{
+			list_contacts();
+			block_and_go_back();
+		}
+		else if (selected_option == CONTACT_MENU_VIEW)
+		{
+			view_single_contact();
+			block_and_go_back();
+		}
+		else if (selected_option == CONTACT_MENU_ADD)
+		{
+			add_contact();
+			block_and_go_back();
+		}
+		else if (selected_option == CONTACT_MENU_EDIT)
+		{
+			edit_contact();
+			block_and_go_back();
+		}
+		else if (selected_option == CONTACT_MENU_DELETE)
+		{
+			delete_contact();
+			block_and_go_back();
+		}
+		else if (selected_option == CONTACT_MENU_EXIT)
+		{
+			cout << "Goodbye!" << endl;
+			b_exit = true;
+		}
+
+		this_thread::sleep_for(3s);
+	}
+}
+
 void ContactMenu::list_contacts()
 {
-	const char seperator = ' ';
-	const int super_long_column_width = 35;
-	const int long_column_width = 25;
-	const int medium_column_width = 16;
-	const int short_column_width = 7;
-
 	//Print header
 	cout << left;
-	cout << setw(medium_column_width) << "First Name";
-	cout << setw(short_column_width) << "M";
-	cout << setw(medium_column_width) << "Last Name";
+	cout << setw(MEDIUM_COLUMN_WIDTH) << "First Name";
+	cout << setw(SHORT_COLUMN_WIDTH) << "M";
+	cout << setw(MEDIUM_COLUMN_WIDTH) << "Last Name";
 
-	cout << setw(medium_column_width) << "Role";
-	cout << setw(super_long_column_width) << "Company";
+	cout << setw(MEDIUM_COLUMN_WIDTH) << "Role";
+	cout << setw(SUPER_LONG_COLUMN_WIDTH) << "Company";
 
-	cout << setw(long_column_width) << "Address";
-	cout << setw(long_column_width) << "City";
-	cout << setw(long_column_width) << "Country";
-	cout << setw(short_column_width) << "State";
-	cout << setw(short_column_width) << "Zip";
+	cout << setw(LONG_COLUMN_WIDTH) << "Address";
+	cout << setw(LONG_COLUMN_WIDTH) << "City";
+	cout << setw(LONG_COLUMN_WIDTH) << "Country";
+	cout << setw(SHORT_COLUMN_WIDTH) << "State";
+	cout << setw(SHORT_COLUMN_WIDTH) << "Zip";
 
-	cout << setw(medium_column_width) << "Primary Phone";
-	cout << setw(medium_column_width) << "Secondary Phone";
-	cout << setw(long_column_width) << "Email";
+	cout << setw(MEDIUM_COLUMN_WIDTH) << "Primary Phone";
+	cout << setw(MEDIUM_COLUMN_WIDTH) << "Secondary Phone";
+	cout << setw(LONG_COLUMN_WIDTH) << "Email";
 	cout << endl;
 
 	for(int i = 0; i < contacts.get_num_elements(); ++i)
-	{
-		cout << setw(medium_column_width) << contacts[i].get_person().get_first_name();
-		cout << setw(short_column_width) << contacts[i].get_person().get_middle_name();
-		cout << setw(medium_column_width) << contacts[i].get_person().get_last_name();
-
-		cout << setw(medium_column_width) << contacts[i].get_person().get_role();
-		cout << setw(super_long_column_width) << contacts[i].get_person().get_organization();
-
-		cout << setw(long_column_width) << contacts[i].get_address();
-		cout << setw(long_column_width) << contacts[i].get_city();
-		cout << setw(long_column_width) << contacts[i].get_county();
-		cout << setw(short_column_width) << contacts[i].get_state();
-		cout << setw(short_column_width) << contacts[i].get_zip();
-
-		cout << setw(medium_column_width) << contacts[i].get_primary_phone_number();
-		cout << setw(medium_column_width) << contacts[i].get_secondary_phone_number();
-		cout << setw(long_column_width) << contacts[i].get_email();
-
-		cout << endl;
-	}
+		cout << contacts[i].to_column_string() << endl;
 }
 
 void ContactMenu::view_single_contact()
 {
 	cout << "***** View a Contact *****" << endl;
 
-	int id;
+	string id;
 	cout << "Enter contact Id:";
-	cin >> id;
+	getline(cin, id);
 	
 	for(int i = 0; i < contacts.get_num_elements(); ++i)
 	{
-		if(contacts[i].get_id() != id)
+		if(contacts[i].get_id() != stoi(id))
 			continue;
-		
-		const int column_width = 25;
-		cout << left;
-		cout << setw(column_width) << "Id:" << contacts[i].get_id() << endl;
-		cout << setw(column_width) << "First Name:" << contacts[i].get_person().get_first_name() << endl;
-		cout << setw(column_width) << "Middle Name:" << contacts[i].get_person().get_middle_name() << endl;
-		cout << setw(column_width) << "Last Name:" << contacts[i].get_person().get_last_name() << endl;
 
-		cout << setw(column_width) << "Address" << contacts[i].get_address() << endl;
-		cout << setw(column_width) << "City" << contacts[i].get_city() << endl;
-		cout << setw(column_width) << "County" << contacts[i].get_county() << endl;
-		cout << setw(column_width) << "State" << contacts[i].get_state() << endl;
-		cout << setw(column_width) << "Zip" << contacts[i].get_zip() << endl;
-
-		cout << setw(column_width) << "Primary Phone Number:" << contacts[i].get_primary_phone_number() << endl;
-		cout << setw(column_width) << "Secondary Phone Number:" << contacts[i].get_secondary_phone_number() << endl;
-		cout << setw(column_width) << "Email:" << contacts[i].get_email() << endl;
-
+		cout << contacts[i].to_labeled_string() << endl;
 		break;
 	}
 }
@@ -263,14 +296,12 @@ void ContactMenu::add_contact()
 	//Get largest contact id; the new contact will be one more than the largest
 	int largest_user_id = 0;
 	for (int i = 0; i < contacts.get_num_elements(); ++i)
-	{
 		if(contacts[i].get_id() > largest_user_id)
 			largest_user_id = contacts[i].get_id();
-	}
 
 	update_contacts_file(Contact(largest_user_id + 1, Person(first_name, middle_name, last_name, role, organization), address, city, county, state, stoi(zip), primary_phone_number, secondary_phone_number, email), true);
 
-	cout << "Contact Added Successfully!" << endl;
+	cout << "Contact Added Successfully! New Contact Id: " << largest_user_id + 1 << endl;
 }
 
 void ContactMenu::edit_contact()
@@ -327,13 +358,13 @@ void ContactMenu::delete_contact()
 {
 	cout << "***** Delete a Contact *****" << endl;
 
-	int id;
+	string id;
 	cout << "Enter Contact Id To Delete:";
-	cin >> id;
+	getline(cin, id);
 
 	for(int i = 0; i < contacts.get_num_elements(); ++i)
 	{
-		if(contacts[i].get_id() == id)
+		if(contacts[i].get_id() == stoi(id))
 		{
 			contacts.remove(i);
 			break;

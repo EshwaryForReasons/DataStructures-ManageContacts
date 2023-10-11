@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <iostream>
+#include <string>
 #include <vector>
 
 using namespace std;
@@ -21,10 +21,6 @@ public:
 	void add_option(const string& option);
 
 	int display_menu() const;
-
-protected:
-
-	virtual void display_data() const {};
 
 private:
 

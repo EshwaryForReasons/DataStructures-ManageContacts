@@ -24,6 +24,9 @@ public:
 
 	ContactMenu();
 
+	//Begins to display options and handling user requests
+	void begin();
+
 	//Lists the contacts
 	void list_contacts();
 	//View a single contact by id

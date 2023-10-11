@@ -12,6 +12,7 @@ public:
     void clear();
     void remove(int position);
     void resize(int new_capacity);
+    void swap(T& a, T& b);
 
     T operator[](int pos) const
     {
@@ -93,4 +94,12 @@ void ArrayList<T>::resize(int new_capacity)
         data = new_data;
         size = new_capacity * sizeof(T);
     }
+}
+
+template<typename T>
+void ArrayList<T>::swap(T& a, T& b)
+{
+    T temp = a;
+    a = b;
+    b = temp;
 }

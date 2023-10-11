@@ -27,6 +27,13 @@ public:
 
     Contact operator=(const Contact& other);
     const bool operator==(const Contact& other);
+    
+    //Returns a comma seperated list of format id,firstname,middlename,lastname,role,organization,address,city,county,state,zip,primaryphonenumber,secondaryphonenumber,email
+    const std::string to_string() const;
+    //Same as to_string, but this time each property is on a new line and labeled
+    const std::string to_labeled_string() const;
+    //Same as to_string, but it is now split into uniform columns
+    const std::string to_column_string() const;
 
     //Setters
     void set_id(int new_id) {id = new_id;}
@@ -71,23 +78,3 @@ private:
     string secondary_phone_number;
     string email;
 };
-
-inline Contact Contact::operator=(const Contact& other)
-{
-    id = other.get_id();
-    person = other.get_person();
-    address = other.get_address();
-    city = other.get_city();
-    county = other.get_county();
-    state = other.get_state();
-    zip = other.get_zip();
-    primary_phone_number = other.get_primary_phone_number();
-    secondary_phone_number = other.get_secondary_phone_number();
-    email = other.get_email();
-    return Contact(id, person, address, city, county, state, zip, primary_phone_number, secondary_phone_number, email);
-}
-
-inline const bool Contact::operator==(const Contact& other)
-{
-    return (id == other.id && person == other.person && address == other.address && city == other.city && county == other.county && state == other.state && zip == other.zip && primary_phone_number == other.primary_phone_number && secondary_phone_number == other.secondary_phone_number && email == other.email);
-}

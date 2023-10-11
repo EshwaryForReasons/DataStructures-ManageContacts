@@ -2,6 +2,7 @@
 #include "Menu.h"
 
 #include <thread>
+#include <iostream>
 
 void Menu::add_option(const string& option)
 {
@@ -20,10 +21,10 @@ int Menu::display_menu() const
 		for (int i = 0; i < (int)options.size(); i++)
 			cout << (i + 1) << ") " << options[i] << endl;
 
-		display_data();
-
+		string temp;
 		cout << "\nEnter choice: ";
-		cin >> input;
+		getline(cin, temp);
+		input = stoi(temp);
 
 		if (input < 1 || input >(int)options.size())
 		{
