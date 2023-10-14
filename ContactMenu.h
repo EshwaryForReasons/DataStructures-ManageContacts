@@ -4,10 +4,11 @@
 #include "Menu.h"
 #include "Contact.h"
 #include "ArrayList.h"
+#include "Util.h"
 
 #include <fstream>
 
-enum LOGIN_MENU_OPTION
+enum CONTACT_MENU_OPTION
 {
 	CONTACT_NONE,
 	CONTACT_MENU_LIST,
@@ -41,12 +42,9 @@ public:
 private:
 
 	//List of all contacts
-	ArrayList<Contact> contacts;
+	class ContactList* contacts;
 
-	//Called when menu is constructed to initialize contacts from contacts_data file
-	void init_contacts();
-
-	//Called to update contacts file. The passed in contact will be updated in the file, the rest will be reconstructed in place; append means add to the end, used for adding new contacts
-	void update_contacts_file(const Contact& update_contact, bool b_append = false);
+	Menu sort_direction_menu;
+	Menu sort_field_menu;
 };
 

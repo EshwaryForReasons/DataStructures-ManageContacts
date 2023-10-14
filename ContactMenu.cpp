@@ -1,12 +1,11 @@
 
 #include "ContactMenu.h"
+#include "ContactList.h"
 
 #include <sstream>
 #include <thread>
 #include <iomanip>
 #include <iostream>
-
-const string CONTACTS_DATA = "contacts_data.csv";
 
 //Define a clear function based on OS the code is compiled for since there is no standard way to do this
 #ifdef _WIN32
@@ -46,119 +45,29 @@ ContactMenu::ContactMenu()
 	add_option("Delete Contact");
 	add_option("Exit");
 
-	init_contacts();
-}
+	//Initialize menus to ask user about listing options. Doing this here do we do not initialize everytime the user lists the contacts
+	sort_direction_menu.set_name("Select Direction To Sort");
+	sort_direction_menu.add_option("Acsending");
+	sort_direction_menu.add_option("Descending");
 
-void ContactMenu::init_contacts()
-{
-	contacts.clear();
+	sort_field_menu.set_name("Select Field To Sort By");
+	sort_field_menu.add_option("Id");
+	sort_field_menu.add_option("First Name");
+	sort_field_menu.add_option("Middle Name");
+	sort_field_menu.add_option("Last Name");
+	sort_field_menu.add_option("Role");
+	sort_field_menu.add_option("Company");
+	sort_field_menu.add_option("Address");
+	sort_field_menu.add_option("City");
+	sort_field_menu.add_option("Country");
+	sort_field_menu.add_option("State");
+	sort_field_menu.add_option("Zip");
+	sort_field_menu.add_option("Primary Phone");
+	sort_field_menu.add_option("Secondary Phone");
+	sort_field_menu.add_option("Email");
 
-	ifstream in_file(CONTACTS_DATA);
-
-	if(in_file.fail())
-		cout << "Failed to open " << CONTACTS_DATA << " file!" << endl;
-
-	//Enum to help access certain elements in the vector since the elements will always be in the same location; this is better than accessing them with numeric indices
-	enum
-	{
-		INFO_ID = 0,
-    	INFO_FIRST_NAME = 1,
-    	INFO_MIDDLE_NAME = 2,
-    	INFO_LAST_NAME = 3,
-    	INFO_ROLE = 4,
-    	INFO_ORGANIZATION = 5,
-    	INFO_ADDRESS = 6,
-    	INFO_CITY = 7,
-    	INFO_COUNTY = 8,
-    	INFO_STATE = 9,
-    	INFO_ZIP = 10,
-    	INFO_PRIMARY_PHONE_NUMBER = 11,
-    	INFO_SECONDARY_PHONE_NUMBER = 12,
-    	INFO_EMAIL = 13
-	} CONTACT_INFO_LOCATION;
-
-	//Construct a User and put it in the user_list for every user in the file
-    string read_contact;
-	bool b_header = true;
-	while (getline(in_file, read_contact))
-	{
-		//Ignore first line
-		if(b_header)
-		{
-			b_header = false;
-			continue;
-		}
-
-		//Vector in order: string id, first_name, middle_name, last_name, role, organization, address, city, county, state, zip, primary_phone_number, secondary_phone_number, email
-		vector<string> contact_information;
-		bool b_in_quotes = false;
-
-		stringstream single_contact_stream(read_contact);
-		string field_data;
-		string quoted_field_data;
-		while (getline(single_contact_stream, field_data, ','))
-		{
-			//Strip the field of the newline character to prevent problems with formatting later
-			if(field_data.find("\r") != string::npos || field_data.find("\n") != string::npos)
-				field_data.erase(field_data.size() - 1);
-
-			//If we are in quotes, then set in quotes flag to true; otherwise false
-			if(field_data.find("\"") != string::npos)
-			{
-				b_in_quotes = !b_in_quotes;
-				quoted_field_data += field_data;
-
-				//Once we are out of quotes, append the quoted field data to the vector and clear the string
-				if(!b_in_quotes)
-				{
-					contact_information.push_back(quoted_field_data);
-					quoted_field_data = "";
-				}
-				else
-					quoted_field_data += ",";
-				
-				continue;
-			}
-			
-			//If in quotes, then we simply create the entire quoted field
-			if(b_in_quotes)
-				quoted_field_data += field_data += ",";
-			else
-				contact_information.push_back(field_data);
-		}
-
-        contacts.insert(Contact(stoi(contact_information[INFO_ID]), Person(contact_information[INFO_FIRST_NAME], contact_information[INFO_MIDDLE_NAME], contact_information[INFO_LAST_NAME], contact_information[INFO_ROLE], contact_information[INFO_ORGANIZATION]), contact_information[INFO_ADDRESS], contact_information[INFO_CITY], contact_information[INFO_COUNTY], contact_information[INFO_STATE], stoi(contact_information[INFO_ZIP]), contact_information[INFO_PRIMARY_PHONE_NUMBER], contact_information[INFO_SECONDARY_PHONE_NUMBER], contact_information[INFO_EMAIL]));
-	}
-
-	in_file.close();
-}
-
-void ContactMenu::update_contacts_file(const Contact& update_contact, bool b_append)
-{
-	fstream file(CONTACTS_DATA, b_append ? ios::app : ios::out);
-
-	//WIll always be added in the following format: contactid,firstname,middlename,lastname,role,organization,address,city,county,state,zip,primaryphonenumber,secondaryphonenumber,email
-
-	if (b_append)
-		file << update_contact.to_string() << "\n";
-	else
-	{
-		//Insert header
-		file << "id,first_name,middle_name,last_name,role,company_name,address,city,county,state,zip,phone1,phone,email" << endl;
-
-		for (int i = 0; i < contacts.get_num_elements(); ++i)
-		{
-			if (contacts[i].get_id() == update_contact.get_id())
-				file << update_contact.to_string() << "\n";
-			else
-				file << contacts[i].to_string() << "\n";
-		}
-	}
-
-	file.close();
-
-	//Update contacts after modifying the file
-	init_contacts();
+	contacts = new ContactList();
+	contacts->init_contacts();
 }
 
 void ContactMenu::begin()
@@ -208,6 +117,18 @@ void ContactMenu::begin()
 
 void ContactMenu::list_contacts()
 {
+	const int direction_option = sort_direction_menu.display_menu();
+
+	cout << "Sorting list by " << sort_direction_menu.get_options()[direction_option - 1] << endl;
+	this_thread::sleep_for(2s);
+	clear_console();
+	
+	const int field_option = sort_field_menu.display_menu();
+
+	cout << "Sorting list by " << sort_field_menu.get_options()[field_option - 1] << " in " << sort_direction_menu.get_options()[direction_option - 1] << " order" << endl;
+	this_thread::sleep_for(2s);
+	clear_console();
+	
 	//Print header
 	cout << left;
 	cout << setw(MEDIUM_COLUMN_WIDTH) << "First Name";
@@ -228,8 +149,14 @@ void ContactMenu::list_contacts()
 	cout << setw(LONG_COLUMN_WIDTH) << "Email";
 	cout << endl;
 
-	for(int i = 0; i < contacts.get_num_elements(); ++i)
-		cout << contacts[i].to_column_string() << endl;
+	contacts->print_list(InfoTypes(field_option - 1), direction_option == 1);
+
+	// CurrentSortDirection = SortDirection(direction_option - 1);
+	// CurrentComparisionField = InfoTypes(field_option - 1);
+	// contacts.sort_list(direction_option == 1);
+
+	// for(int i = 0; i < contacts.get_num_elements(); ++i)
+	// 	cout << contacts[i].to_column_string() << endl;
 }
 
 void ContactMenu::view_single_contact()
@@ -237,17 +164,10 @@ void ContactMenu::view_single_contact()
 	cout << "***** View a Contact *****" << endl;
 
 	string id;
-	cout << "Enter contact Id:";
+	cout << "Enter contact Id: ";
 	getline(cin, id);
-	
-	for(int i = 0; i < contacts.get_num_elements(); ++i)
-	{
-		if(contacts[i].get_id() != stoi(id))
-			continue;
 
-		cout << contacts[i].to_labeled_string() << endl;
-		break;
-	}
+	contacts->view_single_contact(stoi(id));
 }
 
 void ContactMenu::add_contact()
@@ -293,15 +213,10 @@ void ContactMenu::add_contact()
     get_input("Secondary Phone Number: ", secondary_phone_number);
     get_input("Email: ", email);
 
-	//Get largest contact id; the new contact will be one more than the largest
-	int largest_user_id = 0;
-	for (int i = 0; i < contacts.get_num_elements(); ++i)
-		if(contacts[i].get_id() > largest_user_id)
-			largest_user_id = contacts[i].get_id();
+	Contact new_contact(0, first_name, middle_name, last_name, role, organization, address, city, county, state, stoi(zip), primary_phone_number, secondary_phone_number, email);
+	contacts->add_contact(new_contact);
 
-	update_contacts_file(Contact(largest_user_id + 1, Person(first_name, middle_name, last_name, role, organization), address, city, county, state, stoi(zip), primary_phone_number, secondary_phone_number, email), true);
-
-	cout << "Contact Added Successfully! New Contact Id: " << largest_user_id + 1 << endl;
+	cout << "Contact Added Successfully! New Contact Id: " << new_contact.get_id() << endl;
 }
 
 void ContactMenu::edit_contact()
@@ -349,7 +264,7 @@ void ContactMenu::edit_contact()
     get_input("Secondary Phone Number: ", secondary_phone_number);
     get_input("Email: ", email);
 
-	update_contacts_file(Contact(stoi(id), Person(first_name, middle_name, last_name, role, organization), address, city, county, state, stoi(zip), primary_phone_number, secondary_phone_number, email), false);
+	contacts->edit_contact(Contact(stoi(id), first_name, middle_name, last_name, role, organization, address, city, county, state, stoi(zip), primary_phone_number, secondary_phone_number, email));
 
 	cout << "Contact Edited Successfully!" << endl;
 }
@@ -359,20 +274,10 @@ void ContactMenu::delete_contact()
 	cout << "***** Delete a Contact *****" << endl;
 
 	string id;
-	cout << "Enter Contact Id To Delete:";
+	cout << "Enter Contact Id To Delete: ";
 	getline(cin, id);
 
-	for(int i = 0; i < contacts.get_num_elements(); ++i)
-	{
-		if(contacts[i].get_id() == stoi(id))
-		{
-			contacts.remove(i);
-			break;
-		}
-	}
-
-	//Update contacts file to match contacts; contact parameter is just to full the space
-	update_contacts_file(Contact());
+	contacts->delete_contact(stoi(id));
 
 	cout << "Contact Deleted Successfully" << endl;
 }

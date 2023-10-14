@@ -20,7 +20,9 @@ public:
 
 	void add_option(const string& option);
 
-	int display_menu() const;
+	const int display_menu() const;
+
+	const vector<string>& get_options() const {return options;}
 
 private:
 

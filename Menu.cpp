@@ -3,16 +3,15 @@
 
 #include <thread>
 #include <iostream>
+#include <bits/stdc++.h>
 
 void Menu::add_option(const string& option)
 {
 	options.push_back(option);
 }
 
-int Menu::display_menu() const
+const int Menu::display_menu() const
 {
-	int input = 0;
-
 	while (true)
 	{
 		system("clear");
@@ -24,18 +23,16 @@ int Menu::display_menu() const
 		string temp;
 		cout << "\nEnter choice: ";
 		getline(cin, temp);
-		input = stoi(temp);
 
-		if (input < 1 || input >(int)options.size())
+		if(temp == "" || !all_of(temp.begin(), temp.end(), ::isdigit) || (stoi(temp) < 1 || stoi(temp) >(int)options.size()))
 		{
-			cout << "Invalid option!" << endl;
+			cout << "Invalid input, please try again!" << endl;
 			this_thread::sleep_for(2s);
+			continue;
 		}
-		else
-			break;
-	}
 
-	return input;
+		return stoi(temp);
+	}
 }
 
 void Menu::set_name(const string& new_name)

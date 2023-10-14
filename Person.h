@@ -26,13 +26,14 @@ public:
 
     Person operator=(const Person& other);
     const bool operator==(const Person& other);
+    const bool operator!=(const Person& other);
 
     //Returns a comma seperated list of format firstname,middlename,lastname,role,organization
-    const std::string to_string() const;
+    virtual const std::string to_string() const;
     //Same as to_string, but this time each property is on a new line and labeled
-    const std::string to_labeled_string() const;
+    virtual const std::string to_labeled_string() const;
     //Same as to_string, but it is now split into uniform columns
-    const std::string to_column_string() const;
+    virtual const std::string to_column_string() const;
 
     //Setters
     void set_first_name(string new_first_name) {first_name = new_first_name;}
@@ -43,14 +44,16 @@ public:
     void set_organization(string new_organization) {organization = new_organization;}
 
     //Getters
-    string get_first_name() const {return first_name;}
-    string get_middle_name() const {return middle_name;}
-    string get_last_name() const {return last_name;}
+    const string& get_first_name() const {return first_name;}
+    const string& get_middle_name() const {return middle_name;}
+    const string& get_last_name() const {return last_name;}
 
-    string get_role() const {return role;}
-    string get_organization() const {return organization;}
+    const string& get_role() const {return role;}
+    const string& get_organization() const {return organization;}
 
-private:
+    const std::pair<string, string> retrieve_comparision_string(const Person& other) const;
+
+protected:
 
     string first_name;
     string middle_name;

@@ -7,14 +7,14 @@
 
 using namespace std;
 
-class Contact
+class Contact : public Person
 {
 public:
 
     Contact() = default;
-    Contact(int _id, const Person& _person, string _address, string _city, string _county, string _state, int _zip, string _primary_phone_number, string _secondary_phone_number, string _email)
+    Contact(int _id, string _first_name, string _middle_name, string _last_name, string _role, string _organization, string _address, string _city, string _county, string _state, int _zip, string _primary_phone_number, string _secondary_phone_number, string _email)
         : id(_id)
-        , person(_person)
+        , Person(_first_name, _middle_name, _last_name, _role, _organization)
         , address(_address)
         , city(_city)
         , county(_county)
@@ -27,17 +27,20 @@ public:
 
     Contact operator=(const Contact& other);
     const bool operator==(const Contact& other);
+    const bool operator!=(const Contact& other);
+    const bool operator<(const Contact& other);
+    const bool operator>(const Contact& other);
     
     //Returns a comma seperated list of format id,firstname,middlename,lastname,role,organization,address,city,county,state,zip,primaryphonenumber,secondaryphonenumber,email
-    const std::string to_string() const;
+    virtual const std::string to_string() const override;
     //Same as to_string, but this time each property is on a new line and labeled
-    const std::string to_labeled_string() const;
+    virtual const std::string to_labeled_string() const override;
     //Same as to_string, but it is now split into uniform columns
-    const std::string to_column_string() const;
+    virtual const std::string to_column_string() const override;
 
     //Setters
     void set_id(int new_id) {id = new_id;}
-    void set_person(const Person& new_person) {person = new_person;}
+    //void set_person(const Person& new_person) {person = new_person;}
 
     void set_address(string new_address) {address = new_address;}
     void set_city(string new_city) {city = new_city;}
@@ -51,22 +54,24 @@ public:
 
     //Getters
     int get_id() const {return id;}
-    Person get_person() const {return person;}
+    //const Person& get_person() const {return person;}
 
-    string get_address() const {return address;}
-    string get_city() const {return city;}
-    string get_county() const {return county;}
-    string get_state() const {return state;}
-    int get_zip() const {return zip;}
+    const string& get_address() const {return address;}
+    const string& get_city() const {return city;}
+    const string& get_county() const {return county;}
+    const string& get_state() const {return state;}
+    const int get_zip() const {return zip;}
 
-    string get_primary_phone_number() const {return primary_phone_number;}
-    string get_secondary_phone_number() const {return secondary_phone_number;}
-    string get_email() const {return email;}
+    const string& get_primary_phone_number() const {return primary_phone_number;}
+    const string& get_secondary_phone_number() const {return secondary_phone_number;}
+    const string& get_email() const {return email;}
+
+    const std::pair<string, string> retrieve_comparision_string(const Contact& other) const;
 
 private:
 
     int id;
-    Person person;
+    //Person person;
 
     string address;
     string city;
