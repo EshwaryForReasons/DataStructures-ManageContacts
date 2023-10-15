@@ -6,6 +6,10 @@
 
 using namespace std;
 
+/**
+	Miscelanous functions required in multiple places
+*/
+
 enum InfoTypes
 {
 	INFO_ID = 0,
@@ -25,6 +29,12 @@ enum InfoTypes
     INFO_NONE = 14
 };
 
+const int COLUMN_WIDTH = 25;
+const int SUPER_LONG_COLUMN_WIDTH = 35;
+const int LONG_COLUMN_WIDTH = 25;
+const int MEDIUM_COLUMN_WIDTH = 16;
+const int SHORT_COLUMN_WIDTH = 7;
+
 //Define a clear function based on OS the code is compiled for since there is no standard way to do this
 #ifdef _WIN32
 static void clear_console()
@@ -37,7 +47,6 @@ static void clear_console()
 	system("clear");
 }
 #endif
-
 
 static const string lowercase(const string& s)
 {

@@ -7,6 +7,9 @@
 
 using namespace std;
 
+/**
+    Contains contact details. For example address for mailing, phone numbers for calling, and email for emailing.
+*/
 class Contact : public Person
 {
 public:

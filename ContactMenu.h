@@ -19,6 +19,9 @@ enum CONTACT_MENU_OPTION
 	CONTACT_MENU_EXIT
 };
 
+/**
+	Handles all menu functionality and interacts with ContactList appopriately
+*/
 class ContactMenu : public Menu
 {
 public:

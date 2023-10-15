@@ -5,6 +5,9 @@
 #include "Contact.h"
 #include "Util.h"
 
+/**
+    Class specifically designed to abstract ArrayList functionality behind easy to read and understand functions
+*/
 class ContactList : public ArrayList<Contact>
 {
 public:

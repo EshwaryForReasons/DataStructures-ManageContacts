@@ -6,6 +6,9 @@
 
 using namespace std;
 
+/**
+	Base menu class, simply displays menu
+*/
 class Menu
 {
 public:

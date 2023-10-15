@@ -5,12 +5,9 @@
 
 using namespace std;
 
-const int COLUMN_WIDTH = 25;
-const int SUPER_LONG_COLUMN_WIDTH = 35;
-const int LONG_COLUMN_WIDTH = 25;
-const int MEDIUM_COLUMN_WIDTH = 16;
-const int SHORT_COLUMN_WIDTH = 7;
-
+/**
+    Represents basic person information, like name
+*/
 class Person
 {
 public:
@@ -28,7 +25,7 @@ public:
     const bool operator==(const Person& other);
     const bool operator!=(const Person& other);
 
-    //Returns a comma seperated list of format firstname,middlename,lastname,role,organization
+    //Returns a comma separated list of format firstname,middlename,lastname,role,organization
     virtual const std::string to_string() const;
     //Same as to_string, but this time each property is on a new line and labeled
     virtual const std::string to_labeled_string() const;

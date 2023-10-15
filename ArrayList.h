@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include <iostream>
 
+/**
+    Basic template class to handle list functionality
+*/
 template<typename T>
 class ArrayList
 {
@@ -12,16 +15,22 @@ public:
     ArrayList() = default;
     ArrayList(const ArrayList<T>& other);
     
+    //Inserts an element into the array, makes space if we do not have any
     void insert(T element);
+    //Clears the entire array
     void clear();
+    //Removes an element at a specific position in the array
     void remove(int position);
+    //Sorts the list in ascending or descending order. Expects a < and > operator in T
     void sort_list(bool b_ascending);
 
-    T operator[](int pos) const;
+    //Operator to access data at a certain position easier
+    const T operator[](int pos) const;
+    //Assignment operator
     void operator=(const ArrayList<T>& other);
 
-    T* get_data() const {return data;}
-    int get_num_elements() const {return num_elements;}
+	T* get_data() const { return data; }
+	int get_num_elements() const { return num_elements; }
 
 protected:
 
@@ -44,7 +53,7 @@ ArrayList<T>::ArrayList(const ArrayList<T>& other)
 }
 
 template<typename T>
-T ArrayList<T>::operator[](int pos) const
+const T ArrayList<T>::operator[](int pos) const
 {
     return data[pos];
 }
