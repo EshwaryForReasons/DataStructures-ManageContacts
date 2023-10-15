@@ -7,19 +7,6 @@
 #include <iomanip>
 #include <iostream>
 
-//Define a clear function based on OS the code is compiled for since there is no standard way to do this
-#ifdef _WIN32
-void clear_console()
-{
-	system("cls");
-}
-#elif __linux__
-void clear_console()
-{
-	system("clear");
-}
-#endif
-
 using namespace std::chrono_literals;
 
 static void block_and_go_back()
@@ -131,6 +118,8 @@ void ContactMenu::list_contacts()
 	
 	//Print header
 	cout << left;
+	cout << setw(SHORT_COLUMN_WIDTH) << "Id";
+
 	cout << setw(MEDIUM_COLUMN_WIDTH) << "First Name";
 	cout << setw(SHORT_COLUMN_WIDTH) << "M";
 	cout << setw(MEDIUM_COLUMN_WIDTH) << "Last Name";
@@ -147,16 +136,13 @@ void ContactMenu::list_contacts()
 	cout << setw(MEDIUM_COLUMN_WIDTH) << "Primary Phone";
 	cout << setw(MEDIUM_COLUMN_WIDTH) << "Secondary Phone";
 	cout << setw(LONG_COLUMN_WIDTH) << "Email";
+	cout << setfill('-') << setw((MEDIUM_COLUMN_WIDTH * 5) + (SHORT_COLUMN_WIDTH * 3) + (SUPER_LONG_COLUMN_WIDTH * 1) + (LONG_COLUMN_WIDTH * 4)) << "\n";
 	cout << endl;
 
 	contacts->print_list(InfoTypes(field_option - 1), direction_option == 1);
 
-	// CurrentSortDirection = SortDirection(direction_option - 1);
-	// CurrentComparisionField = InfoTypes(field_option - 1);
-	// contacts.sort_list(direction_option == 1);
-
-	// for(int i = 0; i < contacts.get_num_elements(); ++i)
-	// 	cout << contacts[i].to_column_string() << endl;
+	//Reset fill after printing list
+	cout << setfill(' ');
 }
 
 void ContactMenu::view_single_contact()

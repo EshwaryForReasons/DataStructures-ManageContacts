@@ -2,9 +2,9 @@
 #include "Contact.h"
 #include "ContactList.h"
 #include "ContactMenu.h"
-#include "Util.h"
 
 #include <iomanip>
+#include <sstream>
 
 Contact Contact::operator=(const Contact& other)
 {
@@ -75,6 +75,7 @@ const string Contact::to_column_string() const
 {
     stringstream formatted;
     formatted << left;
+	formatted << setw(SHORT_COLUMN_WIDTH) << get_id();
     formatted << Person::to_column_string();
 
 	formatted << setw(LONG_COLUMN_WIDTH) << get_address();
@@ -162,5 +163,5 @@ const std::pair<string, string> Contact::retrieve_comparision_string(const Conta
     }
     };
 
-    return std::pair(our_field, other_field);
+    return std::pair<string, string>(our_field, other_field);
 }

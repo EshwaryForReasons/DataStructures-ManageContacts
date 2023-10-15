@@ -1,9 +1,10 @@
 
 #include "Menu.h"
+#include "Util.h"
 
 #include <thread>
 #include <iostream>
-#include <bits/stdc++.h>
+#include <algorithm>
 
 void Menu::add_option(const string& option)
 {
@@ -14,7 +15,7 @@ const int Menu::display_menu() const
 {
 	while (true)
 	{
-		system("clear");
+		clear_console();
 		cout << "***** " << name << " *****" << endl;
 
 		for (int i = 0; i < (int)options.size(); i++)

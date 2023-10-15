@@ -97,5 +97,5 @@ const std::pair<string, string> Person::retrieve_comparision_string(const Person
     }
     };
 
-    return std::pair(our_field, other_field);
+    return std::pair<string, string>(our_field, other_field);
 }

@@ -82,7 +82,9 @@ void ContactList::print_list(InfoTypes _CurrentComparisionField, bool b_ascendin
     sorted_contacts.sort_list(b_ascending);
 
     for(int i = 0; i < sorted_contacts.get_num_elements(); ++i)
-		cout << sorted_contacts[i].to_column_string() << endl;
+		cout << sorted_contacts[i].to_column_string() << "\n";
+
+	cout << endl;
 }
 
 void ContactList::view_single_contact(int id)

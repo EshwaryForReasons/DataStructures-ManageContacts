@@ -40,7 +40,6 @@ public:
 
     //Setters
     void set_id(int new_id) {id = new_id;}
-    //void set_person(const Person& new_person) {person = new_person;}
 
     void set_address(string new_address) {address = new_address;}
     void set_city(string new_city) {city = new_city;}
@@ -54,7 +53,6 @@ public:
 
     //Getters
     int get_id() const {return id;}
-    //const Person& get_person() const {return person;}
 
     const string& get_address() const {return address;}
     const string& get_city() const {return city;}
@@ -71,7 +69,6 @@ public:
 private:
 
     int id;
-    //Person person;
 
     string address;
     string city;

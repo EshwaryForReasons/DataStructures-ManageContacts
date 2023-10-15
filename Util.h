@@ -25,11 +25,19 @@ enum InfoTypes
     INFO_NONE = 14
 };
 
-enum SortDirection
+//Define a clear function based on OS the code is compiled for since there is no standard way to do this
+#ifdef _WIN32
+static void clear_console()
 {
-    SORT_ASCENDING = 0,
-    SORT_DESCENDING = 1
-};
+	system("cls");
+}
+#elif __linux__
+static void clear_console()
+{
+	system("clear");
+}
+#endif
+
 
 static const string lowercase(const string& s)
 {
@@ -42,20 +50,18 @@ static const string lowercase(const string& s)
 //Compare two strings alphabetically; 0 if both are the same, 1 if first is larger, 2 if second is larger
 static const int compare_strings(const string& a, const string& b)
 {
-    //Lowercase so ASCII's different values for capital and lowercase letters do not interfere; store as char array so we can compare letter to letter
-    char ac[a.size() + 1];
-    memcpy(ac, lowercase(a).c_str(), sizeof(ac));
-    char bc[b.size() + 1];
-    memcpy(bc, lowercase(b).c_str(), sizeof(bc));
+	//Lowercase so the difference in ASCII for capital and lowercase do not interfere with comparison
+	const string ac = lowercase(a);
+	const string bc = lowercase(b);
 
-    for(int i = 0; i < sizeof(ac); ++i)
-    {
-        //Less in ASCII means higher in alphabet
-        if((int)ac[i] < (int)bc[i])
-            return 1;
-        else if((int)ac[i] > (int)bc[i])
-            return 2;
-    }
+	for (int i = 0; i < ac.size(); ++i)
+	{
+		//Less in ASCII means higher in alphabet
+		if ((int)ac[i] < (int)bc[i])
+			return 1;
+		else if ((int)ac[i] > (int)bc[i])
+			return 2;
+	}
 
     return 0;
 }
